@@ -38,6 +38,15 @@ about:
   summary: Pytest plugin to randomly order tests and control random.seed
   license: MIT
   license_file: LICENSE
+  license_family: MIT
+  description: |
+   Pytest plugin to randomly order tests and control random.seed. By resetting the random seed to a repeatable number
+   for each test, tests can create data based on random numbers and yet remain repeatable, for example factory boy's
+   fuzzy values. This is good for ensuring that tests specify the data they need and that the tested system is not
+   affected by any data that is filled in randomly due to not being specified. Pytest will automatically find the
+   plugin and use it when you run pytest.
+  doc_url: https://github.com/pytest-dev/pytest-randomly
+  dev_url: https://github.com/pytest-dev/pytest-randomly
 
 extra:
   recipe-maintainers:
