@@ -19,6 +19,7 @@ requirements:
   host:
     - pip
     - python
+    - wheel
   run:
     - python
     - importlib-metadata >=3.6.0
