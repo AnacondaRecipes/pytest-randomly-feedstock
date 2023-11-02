@@ -1,5 +1,6 @@
 {% set name = "pytest-randomly" %}
-{% set version = "3.12.0" %}
+{% set version = "3.15.0" %}
+{% set name_url = name.split('-')[0]+"_"+name.split('-')[1] %}
 
 
 package:
@@ -7,21 +8,23 @@ package:
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: d60c2db71ac319aee0fc6c4110a7597d611a8b94a5590918bfa8583f00caccb2
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name_url }}/{{ name_url }}-{{ version }}.tar.gz
+  sha256: b908529648667ba5e54723088edd6f82252f540cc340d748d1fa985539687047
 
 build:
+  skip: True  # [py<38]
   number: 0
-  noarch: python
-  script: {{ PYTHON }} -m pip install . -vv
+  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
 
 requirements:
   host:
     - pip
-    - python >=3.6
+    - python
+    - wheel
+    - setuptools
   run:
-    - python >=3.6
-    - importlib-metadata >=3.6.0
+    - python
+    - importlib-metadata >=3.6.0 # [py<310]
     - pytest 
 
 test:
@@ -37,6 +40,15 @@ about:
   summary: Pytest plugin to randomly order tests and control random.seed
   license: MIT
   license_file: LICENSE
+  license_family: MIT
+  description: |
+   Pytest plugin to randomly order tests and control random.seed. By resetting the random seed to a repeatable number
+   for each test, tests can create data based on random numbers and yet remain repeatable, for example factory boy's
+   fuzzy values. This is good for ensuring that tests specify the data they need and that the tested system is not
+   affected by any data that is filled in randomly due to not being specified. Pytest will automatically find the
+   plugin and use it when you run pytest.
+  doc_url: https://github.com/pytest-dev/pytest-randomly
+  dev_url: https://github.com/pytest-dev/pytest-randomly
 
 extra:
   recipe-maintainers:
