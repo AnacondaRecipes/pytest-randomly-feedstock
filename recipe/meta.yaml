@@ -22,7 +22,7 @@ requirements:
     - wheel
   run:
     - python
-    - importlib-metadata >=3.6.0
+    - importlib-metadata >=3.6.0 # [py<310]
     - pytest 
 
 test:
