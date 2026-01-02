@@ -6,8 +6,9 @@ package:
   version: {{ version }}
 
 source:
-  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name.replace("-", "_") }}-{{ version }}.tar.gz
-  sha256: 174e57bb12ac2c26f3578188490bd333f0e80620c3f47340158a86eca0593cd8
+  url: https://github.com/pytest-dev/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
+  # url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name.replace("-", "_") }}-{{ version }}.tar.gz
+  sha256: dc0ad4fc1ff37344b37026063b9587596052215c670094439d68e0eab72cd684
 
 build:
   skip: true  # [py<39]
@@ -24,13 +25,29 @@ requirements:
     - importlib-metadata >=3.6  # [py<310]
     - pytest
 
+# >           raise ValueError("Pytest terminal summary report not found")
+{% set deselect_tests = " --deselect=tests/test_pytest_randomly.py::test_xdist" %}
+# E   ModuleNotFoundError: No module named 'model_bakery'
+{% set deselect_tests = deselect_tests + " --deselect=tests/test_pytest_randomly.py::test_model_bakery" %}
+# E       AssertionError: assert {'errors': 1,...pped': 0, ...} == {'errors': 0,...pped': 0, ...}
+{% set deselect_tests = deselect_tests + " --deselect=tests/test_pytest_randomly.py::test_entrypoint_injection" %}
+# Missing factory_boy for py314
+{% set deselect_tests = deselect_tests + " --deselect=tests/test_pytest_randomly.py::test_factory_boy" %}  # [py==314]
+
 test:
+  source_files:
+    - tests
   imports:
     - pytest_randomly
   commands:
     - pip check
+    - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
+    - pytest -v {{ deselect_tests }} tests
   requires:
     - pip
+    - numpy
+    - faker
+    - factory_boy  # [py<314]
 
 about:
   home: https://github.com/pytest-dev/pytest-randomly
