@@ -1,17 +1,19 @@
 {% set name = "pytest-randomly" %}
-{% set version = "4.0.1" %}
+{% set version = "4.1.0" %}
 
 package:
-  name: {{ name|lower }}
+  name: {{ name }}
   version: {{ version }}
 
 source:
-  url: https://github.com/pytest-dev/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
-  # url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name.replace("-", "_") }}-{{ version }}.tar.gz
-  sha256: dc0ad4fc1ff37344b37026063b9587596052215c670094439d68e0eab72cd684
+  - url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name.replace("-", "_") }}-{{ version }}.tar.gz
+    sha256: 47f1d9746c3bc3efabd53ae1ebfb8bb385cf3d4df4b505b6d58d9c97a3dfe70f
+  - url: https://github.com/pytest-dev/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
+    sha256: 8efb1148c73d6649db3e1a38de426063d9c4b89a4ff990717d44b6513f0a2323
+    folder: gh_src
 
 build:
-  skip: true  # [py<39]
+  skip: true  # [py<310]
   number: 0
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
 
@@ -22,7 +24,6 @@ requirements:
     - setuptools >=77
   run:
     - python
-    - importlib-metadata >=3.6  # [py<310]
     - pytest
 
 # >           raise ValueError("Pytest terminal summary report not found")
@@ -36,13 +37,13 @@ requirements:
 
 test:
   source_files:
-    - tests
+    - gh_src/tests
   imports:
     - pytest_randomly
   commands:
     - pip check
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
-    - pytest -v {{ deselect_tests }} tests
+    - cd gh_src && pytest -v {{ deselect_tests }} tests
   requires:
     - pip
     - numpy
